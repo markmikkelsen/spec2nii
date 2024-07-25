@@ -1,8 +1,24 @@
 This document contains the Spec2nii release history in reverse chronological order.
 
-0.7.4 (WIP)
----------------------------------
-- Refinements and improvements to the GE SVS pipeline from Mark Mikkelsen
+0.8.2 (Tuesday 9th July 2024)
+-------------------------------
+- Fix for multiple GE HBCD sequence names.
+
+0.8.1 (Wednesday 3rd July 2024)
+-------------------------------
+- Bug fix for GE HBCD sequence.
+
+0.8.0 (Wednesday 3rd July 2024)
+-------------------------------
+- Dropped support for Python 3.8 (EOL imminent), added support and testing for 3.12.
+- Compatibility with Numpy 2.0
+
+0.7.4 (Thursday 18th April 2024)
+--------------------------------
+- Refinements and improvements to the GE SVS pipeline from Mark Mikkelsen.
+- Add support for older jMRUI text formats which have a slightly different syntax. With thanks to Donnie Cameron.
+- Handle odd case of XA like .twix headers in a VX baseline scan
+- Improved (and validated) handling of Dinesh Deelchand's slaser sequences with integrated references (`svs_slaser(voi)_dkd(2)`)
 
 0.7.3 (Tuesday 12th March 2024)
 -------------------------------
