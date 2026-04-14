@@ -2,8 +2,10 @@
 
 This module contains the main class to be called as a script (through the main function).
 
-Author: William Clarke <william.clarke@ndcn.ox.ac.uk>
-Copyright (C) 2020 University of Oxford
+Author:  William Clarke         <william.clarke@ndcn.ox.ac.uk>
+         Vasilis Karlaftis      <vasilis.karlaftis@ndcn.ox.ac.uk>
+
+Copyright (C) 2026 University of Oxford
 """
 
 import argparse
@@ -280,6 +282,18 @@ class spec2nii:
                                    verbose=False,
                                    anon=False)
 
+        parser_clean = subparsers.add_parser('clean', help='Update invalid fields in NIfTI-MRS header.')
+        parser_clean.add_argument('file', help='NIfTI-MRS file', type=Path)
+        parser_clean = add_common_parameters(parser_clean)
+        parser_clean.set_defaults(func=self.clean,
+                                  nifti1=False,
+                                  json=False,
+                                  override_nucleus=None,
+                                  override_frequency=None,
+                                  override_dwelltime=None,
+                                  verbose=False,
+                                  anon=False)
+
         if len(sys.argv) == 1:
             parser.print_usage(sys.stderr)
             sys.exit(1)
@@ -318,22 +332,13 @@ class spec2nii:
         """Implement any command line overrides for essential parameters."""
         for nifti_mrs_img in self.imageOut:
             if args.override_dwelltime:
-                nifti_mrs_img.set_dwell_time(args.override_dwelltime)
+                nifti_mrs_img.dwelltime = args.override_dwelltime
 
-            if args.override_nucleus or args.override_frequency:
-                from nibabel.nifti1 import Nifti1Extension
-                hdr_ext_codes = nifti_mrs_img.header.extensions.get_codes()
-                index = hdr_ext_codes.index(44)
-                original = json.loads(nifti_mrs_img.header.extensions[index].get_content())
+            if args.override_frequency:
+                nifti_mrs_img.hdr_ext.SpectrometerFrequency = args.override_frequency
 
-                if args.override_nucleus:
-                    original['ResonantNucleus'] = args.override_nucleus
-                if args.override_frequency:
-                    original['SpectrometerFrequency'] = args.override_frequency
-                json_s = json.dumps(original)
-                new_ext = Nifti1Extension(44, json_s.encode('UTF-8'))
-                nifti_mrs_img.header.extensions.clear()
-                nifti_mrs_img.header.extensions.append(new_ext)
+            if args.override_nucleus:
+                nifti_mrs_img.hdr_ext.ResonantNucleus = args.override_nucleus
 
     def insert_spectralwidth(self):
         """Ensure that the correct spectral width is inserted into the header extension"""
@@ -695,6 +700,11 @@ class spec2nii:
     def insert(self, args):
         from spec2nii.other import insert_hdr_ext
         self.imageOut, self.fileoutNames = insert_hdr_ext(args)
+
+    # Clean function
+    def clean(self, args):
+        from spec2nii.other import clean_hdr_ext
+        self.imageOut, self.fileoutNames = clean_hdr_ext(args)
 
 
 def main(*args):

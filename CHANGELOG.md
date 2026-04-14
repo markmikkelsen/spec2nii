@@ -1,7 +1,8 @@
 This document contains the Spec2nii release history in reverse chronological order.
 
-0.8.8 (WIP)
+0.8.8 (Tuesday 14th April 2026)
 ----------------------------------
+- Added 'clean' subcommand for updating invalid header extensions 
 - Special case handling of DICOM files for dkd_svs_slaser_moconav - awaiting test data.
 - Remove Python 3.9 (eol) from supported versions, add 3.14.
 - Automatic encoding detection for SPAR and rda files (by chardet)
